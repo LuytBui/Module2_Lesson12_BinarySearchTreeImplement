@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 
 public class IntegerBinarySearchTree {
     public class TreeNode {
@@ -21,13 +23,22 @@ public class IntegerBinarySearchTree {
     }
 
     private TreeNode root = null;
-    private int size = 0;
 
     public TreeNode getRoot(){
         return this.root;
     }
     public int size(){
-        return this.size;
+        Stack<TreeNode> stack = new Stack<>();
+        int size = 0;
+        stack.push(root);
+        while (!stack.isEmpty()){
+            TreeNode current = stack.pop();
+            size ++;
+
+            if (current.left != null) stack.push(current.left);
+            if (current.right != null) stack.push(current.right);
+        }
+        return size;
     }
 
     public void addTreeNode(int value) {
@@ -36,7 +47,6 @@ public class IntegerBinarySearchTree {
         } else {
             addTreeNode(root, value);
         }
-        size++;
     }
 
     private void addTreeNode(TreeNode node, int value) {
@@ -56,20 +66,22 @@ public class IntegerBinarySearchTree {
     }
 
     public void printPreOrder() {
-        System.out.println("Các nút theo tiền thứ tự: ");
+        System.out.print("Các nút theo tiền thứ tự: ");
         printPreOrder(root);
+        System.out.println();
     }
 
     private void printPreOrder(TreeNode treeNode) {
         if (treeNode == null) return;
-        System.out.println(treeNode.value);
+        System.out.print(treeNode.value + " ");
         printPreOrder(treeNode.left);
         printPreOrder(treeNode.right);
     }
 
     public void printPostOrder(){
-        System.out.println("Các nút theo hậu thứ tự: ");
+        System.out.print("Các nút theo hậu thứ tự: ");
         printPostOrder(root);
+        System.out.println();
     }
     private void printPostOrder(TreeNode treeNode){
         if (treeNode == null) return;
@@ -79,7 +91,7 @@ public class IntegerBinarySearchTree {
         if (treeNode.right != null) {
             printPostOrder(treeNode.right);
         }
-        System.out.println(treeNode.value);
+        System.out.print(treeNode.value+ " ");
     }
 
     public int getHeight() {
@@ -92,7 +104,7 @@ public class IntegerBinarySearchTree {
         return (1 + Math.max(getHeight(node.left), getHeight(node.right)));
     }
 
-    public LinkedList<Integer> pathTo(int value){
+    public List<Integer> pathTo(int value){
         LinkedList<Integer> path = new LinkedList<>();
         TreeNode node = root;
         boolean isFound = false;
@@ -110,6 +122,55 @@ public class IntegerBinarySearchTree {
         }
         return isFound? path : null;
     }
+
+    public boolean remove(int value){
+        if (root.value == value){
+            root = null;
+            return true;
+        }
+
+        return remove(root, value);
+    }
+
+    public boolean remove(TreeNode node, int value){
+        if (node == null)
+            return false;
+
+        if(node.left != null && node.left.value == value){
+            node.left = null;
+            return true;
+        }
+
+        if(node.right != null && node.right.value == value){
+            node.right = null;
+            return true;
+        }
+
+        if (node.value > value){
+            return remove(node.left, value);
+        } else {
+            return remove(node.right, value);
+        }
+    }
+
+    public boolean contains(int value){
+        boolean isFound = false;
+        TreeNode node = root;
+        while(node != null){
+            if (node.value == value){
+                isFound = true;
+                break;
+            }
+
+            if (node.value > value){
+                node = node.left;
+            } else {
+                node = node.right;
+            }
+        }
+        return isFound;
+    }
+
 
 
 }
